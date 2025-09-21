@@ -1,5 +1,6 @@
 "use client";
 import React, { useMemo, useState, useEffect } from "react";
+import DoctorFTESelector from "./components/DoctorFTESelector";
 
 /* ---------------------- MOUNT GUARD ---------------------- */
 function useMounted() {
@@ -459,6 +460,18 @@ export default function Page(){
   const [lastGenAt,setLastGenAt]=useState(null);
   const [prevMonthCardioDoc, setPrevMonthCardioDoc] = useState("");
 
+  // Build the list for the FTE selector (uses your existing arrays)
+const doctorsForSelector = useMemo(
+  () =>
+    ALL_DOCTORS.map((name) => ({
+      id: name,                            // stable id: use the name
+      name,                                // label
+      role: CARDIO_DOCTORS.includes(name) ? "Cardio" : "Algemeen",
+      fte: fte?.[name] ?? 1,               // current/default FTE for this doctor
+    })),
+  [fte]
+);
+
   // Jaarselectie voor tellers
   const [counterYear, setCounterYear] = useState(year);
 
@@ -627,6 +640,22 @@ const res = generateSchedule({
                   {ALL_DOCTORS.map(d=><option key={d} value={d}>{d}</option>)}
                 </select>
               </div>
+
+              {/* FTE selector */}
+<details className="rounded-xl border border-slate-200 p-3">
+  <summary className="cursor-pointer select-none text-sm font-semibold">
+    Beschikbaarheid (FTE)
+  </summary>
+  <div className="pt-2">
+    <DoctorFTESelector
+      doctors={doctorsForSelector}
+      onChange={(map) => {
+        // map looks like: { "dr. calliauw": 0.8, ... }
+        setFte((prev) => ({ ...prev, ...map })); // persists via your saveFTE effect
+      }}
+    />
+  </div>
+</details>
 
               <div>
                 <div className="text-sm font-semibold">Modus</div>
