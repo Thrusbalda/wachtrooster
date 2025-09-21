@@ -2,7 +2,6 @@
 export const dynamic = "force-dynamic";  // disable static pre-render
 
 import React, { useMemo, useState, useEffect } from "react";
-/*import DoctorFTESelector from "./components/DoctorFTESelector";*/
 import SingleDoctorFTESelector from "./components/SingleDoctorFTESelector";
 
 /* ---------------------- MOUNT GUARD ---------------------- */
