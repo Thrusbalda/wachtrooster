@@ -1,4 +1,6 @@
 "use client";
+export const dynamic = "force-dynamic";  // disable static pre-render
+
 import React, { useMemo, useState, useEffect } from "react";
 import DoctorFTESelector from "./components/DoctorFTESelector";
 
@@ -460,6 +462,10 @@ export default function Page(){
   const [lastGenAt,setLastGenAt]=useState(null);
   const [prevMonthCardioDoc, setPrevMonthCardioDoc] = useState("");
 
+    // FTE state
+const [fte, setFte] = useState(() => loadFTE());
+useEffect(() => { saveFTE(fte); }, [fte]);
+
   // Build the list for the FTE selector (uses your existing arrays)
 const doctorsForSelector = useMemo(
   () =>
@@ -487,10 +493,6 @@ const doctorsForSelector = useMemo(
   // UI feedback bij genereren
   const [generating,setGenerating]=useState(false);
   const [flash,setFlash]=useState(false);
-
-  // FTE state
-const [fte, setFte] = useState(() => loadFTE());
-useEffect(() => { saveFTE(fte); }, [fte]);
 
   useEffect(()=>{ setCounterYear(year); },[year]);
   useEffect(()=>{
