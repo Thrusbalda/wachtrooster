@@ -858,9 +858,9 @@ function Violations({violations}){
   if(total===0) return <div className="text-sm text-emerald-700">OK: regels nageleefd.</div>;
   return (
     <div className="text-sm space-y-3">
-      {v.dnw.length>0 && (<div><div className="font-medium">Ingepland op 'dagen_niet_werk':</div><ul className="list-disc pl-6">{v.dnw.map((it,i)=>(<li key={`dnw-${i}`}>{it.date} ({it.dag}) – {it.role}: {it.doc}</li>))}</ul></div>)}
-      {v.dayBefore.length>0 && (<div><div className="font-medium">Ingepland op dag vóór 'dagen_niet_werk' / expliciete niet-werkdatum:</div><ul className="list-disc pl-6">{v.dayBefore.map((it,i)=>(<li key={`db-${i}`}>{it.date} ({it.dag}) – {it.role}: {it.doc}</li>))}</ul></div>)}
-      {v.lateOverlap.length>0 && (<div><div className="font-medium">Late ingepland voor overlap-arts (niet toegestaan):</div><ul className="list-disc pl-6">{v.lateOverlap.map((it,i)=>(<li key={`lo-${i}`}>{it.date} ({it.dag}) – late: {it.doc}</li>))}</ul></div>)}
+      {v.dnw.length>0 && (<div><div className="font-medium">Ingepland op &apos;dagen_niet_werk&apos;:</div><ul className="list-disc pl-6">{v.dnw.map((it,i)=>(<li key={`dnw-${i}`}>{it.date} ({it.dag}) – {it.role}: {it.doc}</li>))}</ul></div>)}
+      {v.dayBefore.length>0 && (<div><div className="font-medium">Ingepland op dag voor &apos;dagen_niet_werk&apos; / expliciete niet-werkdatum:</div><ul className="list-disc pl-6">{v.dayBefore.map((it,i)=>(<li key={`db-${i}`}>{it.date} ({it.dag}) – {it.role}: {it.doc}</li>))}</ul></div>)}
+      {v.lateOverlap.length>0 && (<div><div className="font-medium">{"Late ingepland voor overlap-arts (niet toegestaan):"}</div><ul className="list-disc pl-6">{v.lateOverlap.map((it,i)=>(<li key={`lo-${i}`}>{it.date} ({it.dag}) – late: {it.doc}</li>))}</ul></div>)}
       {v.cardioConsecutive.length>0 && (
         <div>
           <div className="font-medium">Cardio 2 weken na elkaar dezelfde arts:</div>
