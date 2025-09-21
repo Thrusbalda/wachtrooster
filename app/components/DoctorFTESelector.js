@@ -39,19 +39,22 @@ export default function DoctorFTESelector({ doctors = [], onChange }) {
         {doctors.map((doc) => {
           const current = fteById[doc.id] ?? doc.fte ?? 1;
           return (
-            <label key={doc.id} className="flex items-center justify-between rounded-lg border bg-white p-3 shadow-sm">
-              <div>
-                <div className="font-medium">{doc.name}</div>
-                <div className="text-xs text-slate-500">{doc.role ?? "Arts"}</div>
-              </div>
+            <label
+  key={doc.id}
+  className="grid grid-cols-[1fr_auto] items-center gap-2 rounded-xl border bg-white p-3 shadow-sm"
+>
+  <div className="min-w-0">
+    <div className="font-medium truncate">{doc.name}</div>
+    <div className="text-xs text-slate-500">{doc.role ?? "Arts"}</div>
+  </div>
 
-              <select
-                className="rounded-md border px-2 py-1 text-sm"
-                value={current}
-                onChange={(e) =>
-                  setFteById((prev) => ({ ...prev, [doc.id]: Number(e.target.value) }))
-                }
-              >
+  <select
+    className="shrink-0 w-24 rounded-md border px-2 py-1 text-sm"
+    value={current}
+    onChange={(e) =>
+      setFteById((prev) => ({ ...prev, [doc.id]: Number(e.target.value) }))
+    }
+  >
                 {FTE_OPTIONS.map((v) => (
                   <option key={v} value={v}>
                     {v === 0 ? "0 (niet beschikbaar)" : v.toFixed(1)}
