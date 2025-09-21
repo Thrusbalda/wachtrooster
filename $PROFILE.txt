@@ -1,0 +1,8 @@
+function git-ship {
+    param([string]$m = "update")
+    git status
+    git add -A
+    git commit -m $m
+    git pull --rebase origin main
+    git push origin main
+}
