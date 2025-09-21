@@ -1,0 +1,9 @@
+/* Eenvoudige, neutrale basis zonder variabelen/brands */
+html, body {
+  background: #f4f5f7; /* zacht grijs */
+  color: #0f172a;      /* slate-900 */
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+               Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Arial, "Apple Color Emoji",
+               "Segoe UI Emoji", "Segoe UI Symbol";
+}
+h1,h2,h3,h4 { font-weight: 700; }
