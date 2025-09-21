@@ -124,13 +124,13 @@ function buildFairness(counters, fte){
   const ZERO = () => ({ iw:0,iwe:0,lw:0,lwe:0,cw:0,cwe:0 });
   const get = (d)=> counters?.[d] || ZERO();
 
-  // Active pools like before
   const isGenActive = d => {
     const c=get(d); return (c.iw+c.iwe+c.lw+c.lwe) > 0;
   };
   const isCarActive = d => {
     const c=get(d); return (c.cw+c.cwe) > 0;
   };
+
   const genDocs = GENERAL_DOCTORS.filter(isGenActive);
   const carDocs = CARDIO_DOCTORS.filter(isCarActive);
   const genPool = genDocs.length ? genDocs : GENERAL_DOCTORS;
@@ -140,13 +140,12 @@ function buildFairness(counters, fte){
   const genFteSum = sumFte(genPool);
   const carFteSum = sumFte(carPool);
 
-  // Totals realized so far
   const totals = { iw:0,iwe:0,lw:0,lwe:0,cw:0,cwe:0 };
   for(const d of genPool){ const c=get(d); totals.iw+=c.iw; totals.iwe+=c.iwe; totals.lw+=c.lw; totals.lwe+=c.lwe; }
   for(const d of carPool){ const c=get(d); totals.cw+=c.cw; totals.cwe+=c.cwe; }
 
   const def = {};
-  for(const d of ALL_DOCTORS){
+  for(const d of new Set([...GENERAL_DOCTORS, ...CARDIO_DOCTORS])){
     const c = get(d);
     const f = fte?.[d] ?? 1;
 
@@ -169,7 +168,6 @@ function buildFairness(counters, fte){
     };
   }
 
-  // Keep same return shape your picker expects
   const mean = { iw:0,iwe:0,lw:0,lwe:0,cw:0,cwe:0 };
   return { mean, def, genPool, carPool };
 }
@@ -205,7 +203,7 @@ function generateSchedule({
   const posCar=desiderata.posCar, negCar=desiderata.negCar;
 
   const fairnessActive = fairness?.enabled && fairness?.counters;
-  const fairnessData = fairnessActive ? buildFairness(fairness.counters) : null;
+  const fairnessData = fairnessActive ? buildFairness(fairness.counters, fte) : null;
   const alpha = fairnessActive ? (fairness.strength || 0.8) : 0;
 
   const isAvail=(d,day,role)=>{
@@ -245,13 +243,21 @@ function generateSchedule({
     const pool = explicitPos.length ? explicitPos : filtered;
 
     const loads=loadMap(role,isWe);
-    const catKey = role==="inslaap" ? (isWe ? "iwe" : "iw") : (isWe ? "lwe" : "lw");
+    const catKey =
+  role === "inslaap" ? (isWe ? "iwe" : "iw")
+: role === "late"    ? (isWe ? "lwe" : "lw")
+:                      (isWe ? "cwe" : "cw");
 
     let bestScore = Infinity;
     let best = [];
     for(const d of pool){
       const base = loads.get(d) || 0;
-      const fair = fairnessActive ? (fairnessData?.def?.[d]?.[catKey] || 0) : 0;
+      const fair = fairnessActive
+  ? (role === "cardio"
+      ? (fairnessData?.def?.[d]?.cardioTotal || 0) // total cardio W+WE
+      : (fairnessData?.def?.[d]?.[catKey]   || 0)  // inslaap/late by WE/W
+    )
+  : 0;
       const score = base - alpha * fair; // lager = beter
       if (score < bestScore - 1e-9) { bestScore = score; best=[d]; }
       else if (Math.abs(score - bestScore) < 1e-9) { best.push(d); }
@@ -308,7 +314,7 @@ function generateSchedule({
         let bestScore = Infinity, best=[];
         for(const d of base){
           const blocks = (cardioBlocks.get(d)?.size || 0); // aantal cardioweken deze maand
-          const fair = fairnessActive ? ((fairnessData?.def?.[d]?.cardioTotal) || 0) : 0; // jaar-achterstand op totaal cardio (W+WE)
+          const fair = fairnessActive ? (fairnessData?.def?.[d]?.cardioTotal || 0) : 0; // jaar-achterstand op totaal cardio (W+WE)
           const score = blocks - alpha * fair;
           if(score < bestScore - 1e-9){ bestScore=score; best=[d]; }
           else if(Math.abs(score-bestScore)<1e-9){ best.push(d); }
