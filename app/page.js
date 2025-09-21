@@ -2,7 +2,8 @@
 export const dynamic = "force-dynamic";  // disable static pre-render
 
 import React, { useMemo, useState, useEffect } from "react";
-import DoctorFTESelector from "./components/DoctorFTESelector";
+/*import DoctorFTESelector from "./components/DoctorFTESelector";*/
+import SingleDoctorFTESelector from "./components/SingleDoctorFTESelector";
 
 /* ---------------------- MOUNT GUARD ---------------------- */
 function useMounted() {
@@ -648,13 +649,16 @@ const res = generateSchedule({
   <summary className="cursor-pointer select-none text-sm font-semibold">
     Beschikbaarheid (FTE)
   </summary>
-  <div className="pt-2">
-    <DoctorFTESelector
-      doctors={doctorsForSelector}
-      onChange={(map) => {
-        // map looks like: { "dr. calliauw": 0.8, ... }
-        setFte((prev) => ({ ...prev, ...map })); // persists via your saveFTE effect
-      }}
+
+  <div className="pt-2 space-y-2">
+    {/* selector for the chosen doctor only */}
+    <SingleDoctorFTESelector
+      doctor={selectedDoctor}
+      role={CARDIO_DOCTORS.includes(selectedDoctor) ? "Cardio" : "Algemeen"}
+      value={fte?.[selectedDoctor] ?? 1}
+      onChange={(newFte) =>
+        setFte((prev) => ({ ...prev, [selectedDoctor]: newFte }))
+      }
     />
   </div>
 </details>
